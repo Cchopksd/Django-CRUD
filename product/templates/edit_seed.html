@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>Edit</title>
+	</head>
+	<body>
+		<a href="/">Product List</a>
+		<a href="/add">Insert Product</a>
+
+		<form method="POST">
+			{% csrf_token %}
+			<h1>Insert Product</h1>
+			<label for="seed_repDate">seed rep Date</label>
+			<input
+				type="date"
+				name="seed_repDate"
+				value="{{gregorian_date}}" />
+
+			<label for="seeds_yearWeek">Enter a Year Week:</label>
+			<input
+				type="number"
+				id="seeds_yearWeek"
+				name="seeds_yearWeek"
+				value="{{Seeds_YearWeek}}"
+				step="1" />
+
+			<label for="seed_varity">Enter a variety:</label>
+			<input
+				type="text"
+				id="seed_varity"
+				name="seed_varity"
+				value="{{Seed_Varity}}" />
+
+			<label for="seed_RDCSD">Enter a RDCSD:</label>
+			<input
+				type="text"
+				id="seed_RDCSD"
+				name="seed_RDCSD"
+				value="{{Seed_RDCSD}}" />
+
+			<label for="seed_stock2Sale">Enter a Stock To Sale:</label>
+			<input
+				type="text"
+				id="seed_stock2Sale"
+				name="seed_stock2Sale"
+				value="{{Seed_Stock2Sale}}" />
+
+			<label for="seed_season">Enter a Season:</label>
+			<input
+				type="number"
+				id="seed_season"
+				name="seed_season"
+				min="1"
+				max="4"
+				step="1"
+				value="{{Seed_Season}}" />
+
+			<label for="seed_crop_year">Enter a Crop Year:</label>
+			<input
+				type="text"
+				id="seed_crop_year"
+				name="seed_crop_year"
+				value="{{Seed_Crop_Year}}" />
+
+			<input type="submit" />
+		</form>
+	</body>
+</html>

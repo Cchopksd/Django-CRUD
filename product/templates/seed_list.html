@@ -1,0 +1,101 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>Product List</title>
+	</head>
+	<body>
+		<a href="/">Product List</a>
+		<a href="/add">Insert Product</a>
+
+		<h1>Product List</h1>
+		<table style="border-collapse: collapse">
+			<thead>
+				<tr>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>ID</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Rep Date</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Year</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>YearWeek</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Variety</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>RDCSD</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Stock To Sale</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Season</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Crop Year</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Edit</strong>
+					</th>
+					<th style="border: 1px solid black; padding: 8px">
+						<strong>Delete</strong>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for payload in products %}
+				<tr>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload|get_key:'_id' }}
+					</td>
+
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_RepDate }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_Year }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seeds_YearWeek }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_Varity }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_RDCSD }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_Stock2Sale }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_Season }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						{{ payload.Seed_Crop_Year }}
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						<a href="/edit-product/{{ payload|get_key:'_id' }}">
+							Edit
+						</a>
+					</td>
+					<td style="border: 1px solid black; padding: 8px">
+						<a href="/delete-product/{{ payload|get_key:'_id' }}">
+							Delete
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</body>
+</html>

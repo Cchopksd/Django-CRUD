@@ -3,6 +3,7 @@ from db_connection import db
 
 
 collection = db["product"]
+users_collection = db["users"]
 
 # class Seed(models.Model):
 #     _id = models.IntegerField(primary_key=True)

@@ -165,7 +165,7 @@ def insert_product(request):
 
 
 @swagger_auto_schema(
-    methods=["GET", "POST"],
+    methods=["PUT"],
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         required=[
@@ -189,10 +189,10 @@ def insert_product(request):
     ),
     responses={200: "Success"},
 )
-@api_view(["GET", "POST"])
+@api_view(["GET", "PUT"])
 @check_permission
 def edit_product(request, product_id):
-    if request.method == "POST":
+    if request.method == "PUT":
         data = request.data
         condition = int(product_id)
         seed_repDate = data.get("seed_repDate")

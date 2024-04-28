@@ -252,6 +252,6 @@ def delete_product(request, product_id):
     collection.delete_one({"_id": condition})
 
     if "text/html" in request.headers.get("Accept", ""):
-        return redirect("/")
+        return redirect("/product-list/")
     else:
         return JsonResponse("Delete Successful", status=200, safe=False)

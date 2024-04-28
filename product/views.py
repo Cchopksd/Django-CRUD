@@ -1,14 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from .models import collection, users_collection
-from django.contrib import messages
-from django.views.decorators.csrf import requires_csrf_token
 from datetime import datetime, timedelta
 import jwt
 from django.conf import settings
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from functools import wraps
 
 
 def index(request):
@@ -39,14 +38,10 @@ def generate_tokens(user_id):
 
 @api_view(["GET", "POST"])
 def login(request):
-    if "username" in request.COOKIES:
-        return redirect("/")
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-
         user = users_collection.find_one({"username": username})
-
         if user is None or user.get("password") != password:
             return JsonResponse({"error": "Invalid username or password"}, status=400)
 
@@ -62,7 +57,37 @@ def login(request):
     return render(request, "login.html")
 
 
+def check_permission(view_func):
+    @wraps(view_func)
+    def wrapped_view(request, *args, **kwargs):
+        auth_token = request.COOKIES.get("access_token")
+
+        if not auth_token:
+            return JsonResponse(
+                {"error": "Authentication credentials were not provided."}, status=401
+            )
+
+        try:
+            payload = jwt.decode(
+                auth_token, settings.JWT_SECRET_KEY, algorithms=["HS256"]
+            )
+            request.user_id = payload["user_id"]
+        except jwt.ExpiredSignatureError:
+            if "text/html" in request.headers.get("Accept", ""):
+                return redirect("/accounts/login")
+            else:
+                return JsonResponse({"error": "Token has expired"}, status=401)
+
+        except (jwt.InvalidTokenError, KeyError):
+            return JsonResponse({"error": "Invalid token"}, status=401)
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapped_view
+
+
 @api_view(["GET"])
+@check_permission
 def get_all_product(request):
     """
     Retrieve all products.
@@ -102,6 +127,7 @@ def get_all_product(request):
     responses={200: "Success"},
 )
 @api_view(["GET", "POST"])
+@check_permission
 def insert_product(request):
     if request.method == "POST":
         data = request.data
@@ -139,7 +165,7 @@ def insert_product(request):
 
 
 @swagger_auto_schema(
-    methods=["PUT"],
+    methods=["GET", "POST"],
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         required=[
@@ -163,21 +189,23 @@ def insert_product(request):
     ),
     responses={200: "Success"},
 )
-@api_view(["GET", "PUT"])
+@api_view(["GET", "POST"])
+@check_permission
 def edit_product(request, product_id):
-    if request.method == "PUT":
+    if request.method == "POST":
         data = request.data
         condition = int(product_id)
-        data = data.get("seed_repDate")
-        date_obj = datetime.strptime(data, "%Y-%m-%d")
-        thai_year = date_obj.year + 543
-        thai_date_str = f"{thai_year:04d}{date_obj.month:02d}{date_obj.day:02d}"
+        seed_repDate = data.get("seed_repDate")
         yearWeek = data.get("seeds_yearWeek")
         varity = data.get("seed_varity")
         RDCSD = data.get("seed_RDCSD")
         stock2Sale = data.get("seed_stock2Sale")
         season = data.get("seed_season")
         crop_year = data.get("seed_crop_year")
+
+        date_obj = datetime.strptime(seed_repDate, "%Y-%m-%d")
+        thai_year = date_obj.year + 543
+        thai_date_str = f"{thai_year:04d}{date_obj.month:02d}{date_obj.day:02d}"
 
         document = {
             "$set": {
@@ -196,7 +224,10 @@ def edit_product(request, product_id):
 
         collection.update_one(filter, document)
 
-        return redirect("/")
+        if "text/html" in request.headers.get("Accept", ""):
+            return redirect("/product-list/")
+        else:
+            return JsonResponse({"success"}, status=201)
 
     else:
         condition = int(product_id)
@@ -215,6 +246,7 @@ def edit_product(request, product_id):
     methods=["delete"], responses={204: "No Content", 404: "Not Found"}
 )
 @api_view(["DELETE"])
+@check_permission
 def delete_product(request, product_id):
     condition = int(product_id)
     collection.delete_one({"_id": condition})

@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-=#ylx_8dblyh2+1i_o+5n=w1r#q9@uo96&t3tl-xljp&x#woih
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -111,11 +111,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-}
 REFRESH_TOKEN_SECRET_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcxNDE5NzE1OCwiaWF0IjoxNzE0MTk3MTU4fQ.G7BpSn85opwF2uBuK5jd8Kf312OjN9Wq-NNSC9-AUqU"
 JWT_SECRET_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcxNDE5NzE1OCwiaWF0IjoxNzE0MTk3MTU4fQ.wqt2rmab2yoNVFpz1K9REH6FVmlA-FC_GGH3wWy5IyA"
 ACCESS_TOKEN_EXPIRY = 30

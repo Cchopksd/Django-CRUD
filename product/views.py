@@ -242,15 +242,12 @@ def edit_product(request, product_id):
         return render(request, "edit_seed.html", payload)
 
 
-@swagger_auto_schema(
-    methods=["delete"], responses={204: "No Content", 404: "Not Found"}
-)
-@api_view(["DELETE"])
+@swagger_auto_schema(methods=["delete"], responses={204: "No Content"})
+@api_view(["GET", "DELETE"])
 @check_permission
 def delete_product(request, product_id):
     condition = int(product_id)
     collection.delete_one({"_id": condition})
-
     if "text/html" in request.headers.get("Accept", ""):
         return redirect("/product-list/")
     else:
